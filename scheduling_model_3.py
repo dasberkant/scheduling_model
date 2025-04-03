@@ -69,13 +69,20 @@ def solve_rental_scheduling_streamlit(num_orders, num_vehicles,
                     model.addConstr(delta[i,j,v] <= x[i,v] + x[j,v],
                                     name=f"deltaActive_{i}_{j}_{v}")
                     model.addConstr(
-                        S[j] >= S[i] + p_list[i-1] - big_m*(1 - delta[i,j,v]),
+                        S[j] >= S[i] + p_list[i-1]
+                        - big_m*(1 - delta[i,j,v])
+                        - big_m*(1 - x[i,v])
+                        - big_m*(1 - x[j,v]),
                         name=f"NoOverlap1_{i}_{j}_{v}"
                     )
                     model.addConstr(
-                        S[i] >= S[j] + p_list[j-1] - big_m*delta[i,j,v],
+                        S[i] >= S[j] + p_list[j-1]
+                        - big_m*(delta[i,j,v])
+                        - big_m*(1 - x[i,v])
+                        - big_m*(1 - x[j,v]),
                         name=f"NoOverlap2_{i}_{j}_{v}"
                     )
+
 
     # 5) 24-Hour Start Limit if 24 + p[i] <= d[i]
     for i in I:
